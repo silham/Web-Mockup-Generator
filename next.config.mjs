@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    externals: ['chrome-aws-lambda'],
+};
 
 export default nextConfig;
