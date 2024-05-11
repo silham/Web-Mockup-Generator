@@ -1,6 +1,12 @@
-import chromium from "chrome-aws-lambda";
+import puppeteer from "@cloudflare/puppeteer";
 
-export async function GET(req: Request) {
+export const runtime = 'edge';
+
+interface Env {
+	MYBROWSER: any;
+}
+
+export async function GET(req: Request, env: Env) {
   const { searchParams } = new URL(req.url);
   const url = searchParams.get('url');
   const width = searchParams.get('width');
@@ -10,15 +16,8 @@ export async function GET(req: Request) {
     return new Response('Missing params', { status: 400 });
   }
 
-  // Ensure Lambda Layer is configured with Chromium binary
-  const executablePath = await chromium.executablePath;
-
   try {
-    const browser = await chromium.puppeteer.launch({
-      args: chromium.args,
-      headless: true, // Recommended for serverless environments
-      executablePath,
-    });
+    const browser = await puppeteer.launch(env.MYBROWSER)
     const page = await browser.newPage();
 
     await page.goto(url);
